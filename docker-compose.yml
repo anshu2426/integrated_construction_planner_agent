@@ -1,9 +1,17 @@
-version: '3.8'
-
 services:
   app:
-    build: .
+    image: ${DOCKER_IMAGE:-anshulyd26/construction-planner}:latest
+    container_name: construction-planner
     ports:
       - "8501:8501"
     env_file:
       - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8501')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
